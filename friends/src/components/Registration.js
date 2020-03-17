@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 
 
-function Login({ errors, touched, ...props}){
+function Regristration({errors, touched}){
 
     return <div className = 'form'>
         <Form>
@@ -19,7 +19,16 @@ function Login({ errors, touched, ...props}){
                 placeholder = 'Username'
             />
           </div>
-          
+
+          <div>
+            {errors.username && <p>{errors.email}</p>}
+             <Field
+                type = 'text'
+                name = 'email'
+                placeholder = 'Email'
+            />
+          </div>
+     
           <div>
             {touched.username && errors.password && <p>{errors.password}</p>}
              <Field
@@ -31,9 +40,8 @@ function Login({ errors, touched, ...props}){
 
             <button type = 'submit'>Submit</button>
 
-
             <div>
-               Want to join the Friends List? Register <Link to = '/register'>Here</Link>
+                Already have a Friend? Login <Link to = '/'>Here</Link>
             </div>
 
         </Form>
@@ -42,36 +50,33 @@ function Login({ errors, touched, ...props}){
     </div>
 };
 
-const FormikLogin = withFormik({
-    mapPropsToValues({username, password}){
+const FormikRegristration = withFormik({
+    mapPropsToValues({username, email, password}){
 
         return{
             username: username || '',
+            email: email || '',
             password: password || '',
         };
     },
 
-    handleSubmit(values, {resetForm}, {...props} ){
+    handleSubmit(values, { resetForm }){
 
-        console.log('Handle Submit Values:',props)
+        console.log('Handle Submit Values:',values)
 
         axios.post('http://localhost:5000/api/login', values)
 
-        .then(res => {
-            console.log('res', res)
-            if(res.status === 200 && res.data) {
-                localStorage.setItem('token', JSON.stringify(res.data))
-                resetForm();
-                props.history.push('/api/friends')
-           
-            }
+        .then(response => {
+            console.log('Axios.post Response:', response)
+            resetForm();
         })
 
         .catch(error => {
-            console.log('err:', error)
+            console.log('Axios.post Error:', error)
         });
         
     },
-})(Login)
 
-export default FormikLogin
+})(Regristration)
+
+export default FormikRegristration
